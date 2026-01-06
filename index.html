@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Firebase</title>
+</head>
+<body>
+
+<h2>Teste Firebase</h2>
+<p>Abra o console (F12)</p>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAeCrURSs0TBXlYF3TKLi4q98VwrGaKe_Q",
+    authDomain: "spsch-849e5.firebaseapp.com",
+    databaseURL: "https://spsch-849e5-default-rtdb.firebaseio.com",
+    projectId: "spsch-849e5",
+    storageBucket: "spsch-849e5.firebasestorage.app",
+    messagingSenderId: "698967090558",
+    appId: "1:698967090558:web:978781fd27b86c36203f2f"
+  };
+
+  console.log("1️⃣ Inicializando app...");
+  const app = initializeApp(firebaseConfig);
+
+  console.log("2️⃣ Conectando ao database...");
+  const db = getDatabase(app);
+
+  console.log("3️⃣ Lendo raiz do banco...");
+  const rootRef = ref(db, "/");
+
+  get(rootRef)
+    .then(snapshot => {
+      if (snapshot.exists()) {
+        console.log("✅ DADOS RECEBIDOS:", snapshot.val());
+      } else {
+        console.log("⚠️ Banco vazio ou sem permissão.");
+      }
+    })
+    .catch(error => {
+      console.error("❌ ERRO AO LER:", error);
+    });
+</script>
+
+</body>
+</html>
