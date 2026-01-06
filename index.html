@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Teste Firebase</title>
+  <title>Teste Firebase • SPS</title>
 </head>
 <body>
 
@@ -10,8 +10,8 @@
 <p>Abra o console (F12)</p>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAeCrURSs0TBXlYF3TKLi4q98VwrGaKe_Q",
@@ -26,28 +26,24 @@
   console.log("1️⃣ Inicializando Firebase...");
   const app = initializeApp(firebaseConfig);
 
-  console.log("2️⃣ Obtendo Realtime Database...");
+  console.log("2️⃣ Conectando ao Realtime Database...");
   const db = getDatabase(app);
 
-  // 🔴 AJUSTE ESTE CAMINHO
-  const DB_PATH = "/"; 
-  // exemplos válidos:
-  // const DB_PATH = "comandos";
-  // const DB_PATH = "SysSpsHjr";
-  // const DB_PATH = "dados";
+  // 🔴 CAMINHO REAL DO SEU PROJETO
+  const DB_PATH = "app/chamados";
 
   console.log("3️⃣ Lendo caminho:", DB_PATH);
-  const dbRef = ref(db, DB_PATH);
+  const chamadosRef = ref(db, DB_PATH);
 
-  get(dbRef)
+  get(chamadosRef)
     .then(snapshot => {
       console.log("4️⃣ Snapshot bruto:", snapshot);
 
       if (snapshot.exists()) {
-        console.log("✅ DADOS RECEBIDOS:");
+        console.log("✅ DADOS RECEBIDOS DE app/chamados:");
         console.log(snapshot.val());
       } else {
-        console.warn("⚠️ Caminho existe, mas não há dados:", DB_PATH);
+        console.warn("⚠️ Nó existe, mas está vazio:", DB_PATH);
       }
     })
     .catch(error => {
