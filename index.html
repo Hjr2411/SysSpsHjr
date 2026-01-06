@@ -23,25 +23,35 @@
     appId: "1:698967090558:web:978781fd27b86c36203f2f"
   };
 
-  console.log("1️⃣ Inicializando app...");
+  console.log("1️⃣ Inicializando Firebase...");
   const app = initializeApp(firebaseConfig);
 
-  console.log("2️⃣ Conectando ao database...");
+  console.log("2️⃣ Obtendo Realtime Database...");
   const db = getDatabase(app);
 
-  console.log("3️⃣ Lendo raiz do banco...");
-  const rootRef = ref(db, "/");
+  // 🔴 AJUSTE ESTE CAMINHO
+  const DB_PATH = "/"; 
+  // exemplos válidos:
+  // const DB_PATH = "comandos";
+  // const DB_PATH = "SysSpsHjr";
+  // const DB_PATH = "dados";
 
-  get(rootRef)
+  console.log("3️⃣ Lendo caminho:", DB_PATH);
+  const dbRef = ref(db, DB_PATH);
+
+  get(dbRef)
     .then(snapshot => {
+      console.log("4️⃣ Snapshot bruto:", snapshot);
+
       if (snapshot.exists()) {
-        console.log("✅ DADOS RECEBIDOS:", snapshot.val());
+        console.log("✅ DADOS RECEBIDOS:");
+        console.log(snapshot.val());
       } else {
-        console.log("⚠️ Banco vazio ou sem permissão.");
+        console.warn("⚠️ Caminho existe, mas não há dados:", DB_PATH);
       }
     })
     .catch(error => {
-      console.error("❌ ERRO AO LER:", error);
+      console.error("❌ ERRO AO LER FIREBASE:", error);
     });
 </script>
 
