@@ -23,32 +23,29 @@
     appId: "1:698967090558:web:978781fd27b86c36203f2f"
   };
 
-  console.log("1️⃣ Inicializando Firebase...");
+  console.log("1️⃣ Inicializando Firebase");
   const app = initializeApp(firebaseConfig);
 
-  console.log("2️⃣ Conectando ao Realtime Database...");
+  console.log("2️⃣ Obtendo Database");
   const db = getDatabase(app);
 
-  // 🔴 CAMINHO REAL DO SEU PROJETO
-  const DB_PATH = "app/chamados";
+  const DB_PATH = "app/chamados"; // CONFIRME ESSE CAMINHO
 
-  console.log("3️⃣ Lendo caminho:", DB_PATH);
+  console.log("3️⃣ Lendo:", DB_PATH);
   const chamadosRef = ref(db, DB_PATH);
 
-  get(chamadosRef)
-    .then(snapshot => {
-      console.log("4️⃣ Snapshot bruto:", snapshot);
+  try {
+    const snapshot = await get(chamadosRef);
 
-      if (snapshot.exists()) {
-        console.log("✅ DADOS RECEBIDOS DE app/chamados:");
-        console.log(snapshot.val());
-      } else {
-        console.warn("⚠️ Nó existe, mas está vazio:", DB_PATH);
-      }
-    })
-    .catch(error => {
-      console.error("❌ ERRO AO LER FIREBASE:", error);
-    });
+    if (snapshot.exists()) {
+      console.log("✅ DADOS RECEBIDOS:");
+      console.table(snapshot.val());
+    } else {
+      console.warn("⚠️ Caminho existe, mas está vazio:", DB_PATH);
+    }
+  } catch (err) {
+    console.error("❌ ERRO FIREBASE:", err.code, err.message);
+  }
 </script>
 
 </body>
