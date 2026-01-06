@@ -1,39 +1,132 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <title>Admin - SPS_CH</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
-  <!-- Configuração Firebase -->
-  <script src="firebase-config.js"></script>
+  <meta charset="UTF-8">
+  <title>SysSpsHjr • Admin</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e5e7eb;
+      font-family: Consolas, monospace;
+      padding: 20px;
+    }
+    h1 {
+      color: #38bdf8;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #334155;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #1e293b;
+    }
+    button {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.8;
+    }
+    #log {
+      margin-top: 20px;
+      background: #020617;
+      padding: 10px;
+      font-size: 13px;
+      border: 1px solid #1e293b;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
 </head>
 <body>
-  <div class="app">
-    <div class="topbar">
-      <div class="title">Painel Admin</div>
-      <div class="session">
-        <span id="userName" class="badge"></span>
-        <button onclick="logout()" class="btn ghost">Sair</button>
-      </div>
-    </div>
 
-    <div class="sidebar">
-      <button id="btnUsers" class="nav-btn">Gerenciar Usuários</button>
-      <button id="btnChamados" class="nav-btn">Gerenciar Chamados</button>
-      <button id="btnDashboard" class="nav-btn">Dashboard</button>
-    </div>
+<h1>Admin • SysSpsHjr</h1>
 
-    <div class="content" id="adminContent">
-      <p>Selecione uma opção no menu.</p>
-    </div>
-  </div>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Conteúdo</th>
+      <th>Data</th>
+      <th>Ação</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
 
-  <!-- Scripts do sistema -->
-  <script src="js/utils.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/admin.js"></script>
+<div id="log"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getDatabase, ref, onValue, remove, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAeCrURSs0TBXlYF3TKLi4q98VwrGaKe_Q",
+    authDomain: "spsch-849e5.firebaseapp.com",
+    databaseURL: "https://spsch-849e5-default-rtdb.firebaseio.com",
+    projectId: "spsch-849e5",
+    storageBucket: "spsch-849e5.firebasestorage.app",
+    messagingSenderId: "698967090558",
+    appId: "1:698967090558:web:978781fd27b86c36203f2f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const DB_NODE = "registros"; // 🔴 AJUSTE AQUI
+  const tbody = document.getElementById("tbody");
+  const log = document.getElementById("log");
+
+  function logMsg(msg) {
+    log.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}<br>`;
+    log.scrollTop = log.scrollHeight;
+  }
+
+  const mainRef = ref(db, DB_NODE);
+
+  onValue(mainRef, snapshot => {
+    tbody.innerHTML = "";
+    if (!snapshot.exists()) {
+      logMsg("Nenhum dado encontrado.");
+      return;
+    }
+
+    snapshot.forEach(child => {
+      const id = child.key;
+      const data = child.val();
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${id}</td>
+        <td>${data.conteudo ?? JSON.stringify(data)}</td>
+        <td>${data.data ?? "-"}</td>
+        <td><button onclick="deleteItem('${id}', ${JSON.stringify(data)})">Excluir</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+
+  window.deleteItem = async (id, data) => {
+    if (!confirm("Excluir registro " + id + "?")) return;
+
+    try {
+      await set(ref(db, "backup_deletados/" + id), data);
+      await remove(ref(db, DB_NODE + "/" + id));
+      logMsg("Registro " + id + " excluído e movido para backup.");
+    } catch (e) {
+      logMsg("ERRO: " + e.message);
+    }
+  };
+</script>
+
 </body>
 </html>
