@@ -27,7 +27,7 @@
   <script>
     // Se já estiver logado, pula o login
     if (localStorage.getItem("sps_session")) {
-      window.location.href = "./home.html";
+      window.location.href = "./chamados.html";
     }
 
     const msg = document.getElementById("msg");
@@ -39,7 +39,7 @@
           document.getElementById("user").value.trim(),
           document.getElementById("pass").value
         );
-        window.location.href = "./home.html";
+        window.location.href = "./chamados.html";
       } catch (e) {
         msg.textContent = e.message;
       }
