@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SysSPS • Home (v2.0.0)</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <h1>Home</h1>
+  <p id="info"></p>
+  <button onclick="logout()">Sair</button>
+
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+    const session = requireAuth();
+    document.getElementById("info").textContent =
+      `Logado como ${session.nome} (${session.admin ? "ADMIN" : "USER"})`;
+  </script>
+</body>
+</html>
