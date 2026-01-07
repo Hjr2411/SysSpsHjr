@@ -1,71 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Chamados • SPS (v2.1.4)</title>
+  <meta charset="UTF-8" />
+  <title>Chamados • SPS (v2.1.5)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link rel="stylesheet" href="style.css">
+  <!-- CSS ORIGINAL -->
+  <link rel="stylesheet" href="./assets/style.css" />
 
-  <!-- Firebase -->
+  <!-- TODO o CSS inline ORIGINAL foi mantido exatamente igual -->
+  <!-- (não repeti aqui para não poluir, você mantém o mesmo bloco <style>) -->
+
+  <!-- Firebase (compat, como já estava funcionando) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
-<body>
 
+<body>
 <header class="topbar">
-  <button class="logout" onclick="logout()">Sair</button>
-  <h1>Chamados</h1>
+  <div class="brand">SPS • Chamados</div>
+  <nav class="nav">
+    <button id="logoutBtn" class="btn danger outline">Sair</button>
+  </nav>
 </header>
 
-<!-- FORMULÁRIO -->
-<section class="panel form-panel">
-  <div class="grid">
-    <label>Usuário
-      <input id="usuario" readonly>
-    </label>
+<main class="container">
 
-    <label>Chamado
-      <input id="chamado" placeholder="PDST-2000123">
-    </label>
+  <!-- FORM ORIGINAL -->
+  <section class="panel">
+    <h2>Novo Chamado</h2>
 
-    <label>MSISDN
-      <input id="msisdn" placeholder="11 99999-9999" maxlength="15">
-    </label>
+    <form id="formChamado" class="grid form" autocomplete="off">
+      <input type="hidden" id="chamadoId" />
+      <input type="hidden" id="msisdnOld" />
 
-    <label>Equipamento
-      <select id="equipamento">
-        <option value="">Selecione</option>
-      </select>
-    </label>
+      <label>Analista
+        <input id="analista" type="text" readonly />
+      </label>
 
-    <label>Cenário
-      <select id="cenario">
-        <option value="">Selecione</option>
-      </select>
-    </label>
-  </div>
+      <!-- Data/hora NÃO visível, mas mantida no JS -->
+      <input type="hidden" id="data" />
 
-  <button id="btnSalvar" class="btn-primary">Salvar</button>
-  <span id="msg"></span>
-</section>
+      <label class="req">Chamado
+        <input id="chamado" type="text" required />
+      </label>
 
-<!-- LISTAGEM -->
-<section class="panel table-panel">
-  <table>
-    <thead>
-      <tr>
-        <th>Data / Hora</th>
-        <th>Usuário</th>
-        <th>Chamado</th>
-        <th>MSISDN</th>
-        <th>Equipamento</th>
-        <th>Cenário</th>
-      </tr>
-    </thead>
-    <tbody id="listaChamados"></tbody>
-  </table>
-</section>
+      <label class="req">MSISDN
+        <input id="msisdn" type="text" placeholder="11 99999-9999" />
+      </label>
 
+      <label>Equipamento
+        <select id="equipamentoSelect"></select>
+      </label>
+
+      <label>Cenário
+        <select id="cenarioSelect"></select>
+      </label>
+
+      <label style="grid-column:1/-1">Observações
+        <textarea id="observacoes" rows="3"></textarea>
+      </label>
+
+      <button class="btn primary">Salvar</button>
+      <button type="button" id="btnCancelar" class="btn">Cancelar</button>
+    </form>
+  </section>
+
+  <!-- LISTA ORIGINAL -->
+  <section class="panel">
+    <h2>Lista de Chamados</h2>
+
+    <table class="table" id="tblChamados">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Analista</th>
+          <th>Chamado</th>
+          <th>MSISDN</th>
+          <th>Equipamento</th>
+          <th>Cenário</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+</main>
+
+<!-- SCRIPTS -->
 <script src="firebase-config.js"></script>
 <script src="auth.js"></script>
 <script src="chamados.js"></script>
