@@ -1,14 +1,7 @@
-/project
-├── index.html          (página principal)
-├── style.css           (estilos)
-├── firebase-config.js  (configuração do Firebase)
-├── login.html          (página de login)
-├── user.html           (página do usuário)
-├── admin.html          (página de administração)
-├── dashboard.html      (dashboard público)
-└── js/
-    ├── auth.js         (autenticação e sessão)
-    ├── user.js         (funcionalidades do usuário)
-    ├── admin.js        (funcionalidades de admin)
-    ├── dash.js         (dashboard e gráficos)
-    └── utils.js        (funções utilitárias)
+/
+├── index.html          ← login
+├── home.html           ← página inicial após login (placeholder)
+├── firebase-config.js
+├── auth.js             ← núcleo da autenticação
+└── style.css
+
