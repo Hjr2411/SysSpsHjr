@@ -1,30 +1,21 @@
 body {
-  font-family: Arial, sans-serif;
   background: #0f172a;
   color: #e5e7eb;
-  padding: 20px;
+  font-family: Arial, sans-serif;
+  padding: 40px;
 }
 
-h1 {
-  margin-bottom: 20px;
+.box {
+  max-width: 300px;
+  margin-top: 20px;
 }
 
-table {
+input, button {
   width: 100%;
-  border-collapse: collapse;
-  background: #020617;
-}
-
-th, td {
   padding: 10px;
-  border-bottom: 1px solid #1e293b;
+  margin-bottom: 10px;
 }
 
-th {
-  background: #020617;
-  text-align: left;
-}
-
-tr:hover {
-  background: #020617;
+button {
+  cursor: pointer;
 }
