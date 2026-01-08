@@ -90,7 +90,7 @@ async function carregarChamados() {
       tbody.innerHTML += `
         <tr>
           <td>${new Date(c.createdAt).toLocaleString()}</td>
-          <td>${c.createdBy?.nome || "-"}</td>
+          <td>${c.analista}</td>
           <td>${c.chamado}</td>
           <td>${c.linha}</td>
           <td>${c.equipamento || "-"}</td>
