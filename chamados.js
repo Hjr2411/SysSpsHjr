@@ -1,6 +1,6 @@
 // SysSpsHjr – Chamados
-// Versão: v2.1.6
-// Revisão: correção definitiva do campo ANALISTA
+// Versão: v2.1.7
+// Correção FINAL: analista sempre salvo corretamente
 
 const session = requireAuth();
 const dbRef = firebase.database();
@@ -15,8 +15,11 @@ const selCen = document.getElementById("cenarioSelect");
 const inObs = document.getElementById("observacoes");
 const tbody = document.querySelector("#tblChamados tbody");
 
-/* ===== USUÁRIO VISÍVEL ===== */
-inAnalista.value = session.nome || session.username;
+/* ===== ANALISTA VISÍVEL =====
+   Igual ao ORIGINAL:
+   o input é a fonte da verdade
+*/
+inAnalista.value = session.nome || session.username || "";
 
 /* ===== MSISDN (máscara + normalização) ===== */
 inMsisdn.addEventListener("input", () => {
@@ -51,42 +54,34 @@ async function carregarListas() {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const analista = inAnalista.value.trim(); // 🔥 FONTE CORRETA
   const chamado = inChamado.value.trim();
   const linha = normalizarMsisdn(inMsisdn.value);
 
-  if (!chamado || linha.length !== 11) {
-    alert("Preencha corretamente Chamado e MSISDN (11 dígitos)");
+  if (!analista || !chamado || linha.length !== 11) {
+    alert("Preencha Analista, Chamado e MSISDN corretamente");
     return;
   }
 
   const payload = {
-    // 🔥 CAMPO CANÔNICO (IGUAL AO ORIGINAL)
-    analista: session.nome || session.username,
-
+    analista,              // 🔥 NUNCA undefined
     chamado,
     linha,
     equipamento: selEquip.value,
     cenario: selCen.value,
     observacoes: inObs.value.trim(),
 
-    // automáticos
     createdAt: Date.now(),
-    deleted: false,
-
-    // metadado (opcional, não usado na listagem)
-    createdBy: {
-      username: session.username,
-      nome: session.nome
-    }
+    deleted: false
   };
 
   try {
     await dbRef.ref("app/chamados").push(payload);
     form.reset();
-    inAnalista.value = session.nome || session.username;
+    inAnalista.value = analista; // mantém após reset
     carregarChamados();
   } catch (err) {
-    console.error("Erro ao salvar:", err);
+    console.error(err);
     alert("Erro ao salvar chamado");
   }
 });
@@ -99,8 +94,7 @@ async function carregarChamados() {
   const dados = snap.val();
   if (!dados) return;
 
-  Object.entries(dados)
-    .map(([_, c]) => c)
+  Object.values(dados)
     .filter(c => !c.deleted)
     .sort((a, b) => b.createdAt - a.createdAt)
     .forEach(c => {
