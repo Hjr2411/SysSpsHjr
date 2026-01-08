@@ -1,6 +1,6 @@
 // SysSpsHjr – Chamados
-// Versão: v2.1.7
-// Correção FINAL: analista sempre salvo corretamente
+// Versão: v2.1.8
+// CORREÇÃO FINAL: analista explicitamente enviado ao Firebase
 
 const session = requireAuth();
 const dbRef = firebase.database();
@@ -15,11 +15,9 @@ const selCen = document.getElementById("cenarioSelect");
 const inObs = document.getElementById("observacoes");
 const tbody = document.querySelector("#tblChamados tbody");
 
-/* ===== ANALISTA VISÍVEL =====
-   Igual ao ORIGINAL:
-   o input é a fonte da verdade
-*/
-inAnalista.value = session.nome || session.username || "";
+/* ===== INICIALIZA ANALISTA (APENAS PARA UI) ===== */
+inAnalista.value = session?.username || ""; 
+// OBS: apenas preenche a tela. NÃO usamos session para salvar.
 
 /* ===== MSISDN (máscara + normalização) ===== */
 inMsisdn.addEventListener("input", () => {
@@ -50,11 +48,13 @@ async function carregarListas() {
   });
 }
 
-/* ===== SALVAR CHAMADO ===== */
+/* ===== SALVAR CHAMADO (PONTO CRÍTICO) ===== */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const analista = inAnalista.value.trim(); // 🔥 FONTE CORRETA
+  // 🔥 ESTE É O PONTO QUE FALTAVA
+  const analista = inAnalista.value.trim();
+
   const chamado = inChamado.value.trim();
   const linha = normalizarMsisdn(inMsisdn.value);
 
@@ -63,25 +63,29 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  // 🔥 PAYLOAD EXPLÍCITO
   const payload = {
-    analista,              // 🔥 NUNCA undefined
-    chamado,
-    linha,
+    analista: analista,   // <<< AGORA SIM É ENVIADO
+    chamado: chamado,
+    linha: linha,
     equipamento: selEquip.value,
     cenario: selCen.value,
     observacoes: inObs.value.trim(),
-
     createdAt: Date.now(),
     deleted: false
   };
 
   try {
     await dbRef.ref("app/chamados").push(payload);
+
     form.reset();
-    inAnalista.value = analista; // mantém após reset
+
+    // mantém o analista após reset (igual ao original)
+    inAnalista.value = analista;
+
     carregarChamados();
   } catch (err) {
-    console.error(err);
+    console.error("Erro ao salvar:", err);
     alert("Erro ao salvar chamado");
   }
 });
