@@ -15,6 +15,18 @@ const selCen = document.getElementById("cenarioSelect");
 const inObs = document.getElementById("observacoes");
 const tbody = document.querySelector("#tblChamados tbody");
 
+function validarChamado(valor) {
+  if (!valor) return false;
+
+  // normaliza
+  const v = valor.trim().toUpperCase();
+
+  // regra do original
+  return v.startsWith("PDST-");
+}
+
+
+
 /* ===== INICIALIZA ANALISTA (APENAS PARA UI) ===== */
 inAnalista.value = session?.username || ""; 
 // OBS: apenas preenche a tela. NÃO usamos session para salvar.
@@ -54,8 +66,16 @@ form.addEventListener("submit", async (e) => {
 
   // 🔥 ESTE É O PONTO QUE FALTAVA
   const analista = inAnalista.value.trim();
+  
+const chamadoRaw = inChamado.value;
+const chamado = chamadoRaw.trim().toUpperCase();
 
-  const chamado = inChamado.value.trim();
+if (!validarChamado(chamado)) {
+  alert("O chamado deve começar com PDST-");
+  inChamado.focus();
+  return;
+}
+
   const linha = normalizarMsisdn(inMsisdn.value);
 
   if (!analista || !chamado || linha.length !== 11) {
